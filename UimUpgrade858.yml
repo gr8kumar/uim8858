@@ -1,0 +1,18 @@
+- hosts: uim_core_hub
+  roles:
+    - upgrade858
+  post_tasks:
+    - pause: minutes=1
+
+- hosts: uim_core_ump
+  tasks:
+    - name: Deactivate Wasp Probe
+      command: /opt/nimsoft/bin/pu -u administrator -p {{NmsAdminPass}} /{{NmsDomain}}/{{NmsCoreHub}}/{{NmsUmpRobot}}/controller probe_deactivate 'wasp'
+    - pause: minutes=1
+
+    - name: Copy MCS Health MySQL Zip
+      copy: src={{NmsUpgradeDir}}/MCS_Health_MySQL.zip dest=/opt/nimsoft/probes/service/wasp/webapps/dashboard/WEB-INF/classes/defaultDashboards/MCS_Health_MySQL.zip
+    - pause: minutes=1
+
+    - name: Activate Wasp Probe
+      command: /opt/nimsoft/bin/pu -u administrator -p {{NmsAdminPass}} /{{NmsDomain}}/{{NmsCoreHub}}/{{NmsUmpRobot}}/controller probe_activate 'wasp'

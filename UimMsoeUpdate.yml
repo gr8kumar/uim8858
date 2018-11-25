@@ -1,0 +1,53 @@
+---
+- hosts: all
+  tasks:
+    - name: Nimbus Stop
+      shell: /etc/init.d/nimbus stop
+
+- hosts: uim_core_db
+  tasks:
+    - name: MySQL Stop
+      service: name=mysqld state=stopped
+
+- hosts: uim_core_db
+  roles:
+    - msoe_update
+  post_tasks:
+    - pause: minutes=1
+
+- hosts: uim_core_hub
+  roles:
+    - msoe_update
+  post_tasks:
+    - pause: minutes=1
+
+- hosts: uim_core_ump
+  roles:
+    - msoe_update
+  post_tasks:
+    - pause: minutes=1
+
+- hosts: uim_core_db
+  tasks:
+    - name: MySQL Start
+      service: name=mysqld state=started
+    - pause: seconds=10
+
+- hosts: uim_core_hub
+  tasks:
+    - name: Nimbus Start
+      shell: /etc/init.d/nimbus start
+    - pause: seconds=10
+
+- hosts: uim_core_db
+  tasks:
+    - name: Nimbus Start
+      shell: /etc/init.d/nimbus start
+    - pause: seconds=10
+
+- hosts: uim_core_ump
+  tasks:
+    - name: Nimbus Start
+      shell: /etc/init.d/nimbus start
+    - pause: seconds=10
+

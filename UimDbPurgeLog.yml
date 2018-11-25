@@ -1,0 +1,5 @@
+---
+- hosts: all
+  tasks:
+    - name: Purge the BinLogs for Nimsoft Database
+      shell: mysql --user=root {{ NmsDatabase }} --host=localhost --execute="reset master;"
